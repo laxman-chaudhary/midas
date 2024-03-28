@@ -1,0 +1,51 @@
+name: Build and Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # or any other branch you want to trigger the deployment
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: alexlaxu/midas:latest  # Replace with your Docker Hub username and image name
+
+  deploy-to-ec2:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy Docker Compose file to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"  # The path to your Docker Compose file in the repository
+          target: "/var/www/html/midas/docker-compose.yml"
+      
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/html/midas/  # The directory where you copied the Docker Compose file
+            docker compose down  # Take down the current containers
+            docker compose up -d  # Start up the containers in detached mode
