@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           password: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "docker-compose.yml"  # The path to your Docker Compose file in the repository
-          target: "/var/www/html/midas/docker-compose.yml"
+          target: /var/www/html/midas
       
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
