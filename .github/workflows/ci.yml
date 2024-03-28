@@ -35,7 +35,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          password: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "docker-compose.yml"  # The path to your Docker Compose file in the repository
           target: "/var/www/html/midas/docker-compose.yml"
       
@@ -44,7 +44,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          password: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/html/midas/  # The directory where you copied the Docker Compose file
             docker compose down  # Take down the current containers
