@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   webserver:
-    image: php:psql_01
+    image: alexlaxu/midas:latest 
       #volumes:
       #- /var/www/html/midas:/var/www/html/  # Mount your PHP application directory
     ports:
